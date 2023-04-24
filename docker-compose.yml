@@ -1,0 +1,22 @@
+# its good practice to specify the version in case a newer version has a different layout/specification
+version: "3.9"
+
+services:
+# app is simply the name of our service
+  app:
+    build:
+    # build the Dockerfile inside our current directory
+      context: .
+      args:
+      # if this docker-compose file is run, a build arg DEV of value true will be set
+        - DEV=true
+    ports:
+      # mappings hostPort:containerPort
+      - "8000:8000"
+    volumes:
+      # this ensures each changes in our ./app will be reflected inside the container and vice versa
+      - ./app:/app
+      # specify the default command to be ran when starting the container
+      # -c is used to capture codes inside double quotes
+    command: >
+      sh -c "python manage.py runserver 0.0.0.0:8000"
