@@ -19,3 +19,6 @@ from django.urls import path
 urlpatterns = [
     path('admin/', admin.site.urls),
 ]
+
+#break linting
+one=1 #must be one = 1
