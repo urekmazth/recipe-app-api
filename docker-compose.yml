@@ -4,6 +4,10 @@ version: "3.9"
 services:
 # app is simply the name of our service
   app:
+    # inform docker that the app service depends on the db service. Thus db will be made availlable via connectivity to app
+    # tries and wait for the db service to start
+    depends_on:
+      - db
     build:
     # build the Dockerfile inside our current directory
       context: .
@@ -20,3 +24,27 @@ services:
       # -c is used to capture codes inside double quotes
     command: >
       sh -c "python manage.py runserver 0.0.0.0:8000"
+    environment:
+    # must match service name, postgres user and pass respectively
+      - DB_HOST=db
+      - DB_NAME=devdb
+      - DB_USER=devuser
+      - DB_PASSWORD=changeme
+
+  # our postgres database service
+  db:
+    image: postgres:13-alpine
+    volumes:
+      # volumes are used to persist data in container event after service is stopped
+      # we map to the data location of a postgres db.. see docs
+      - dev-db-data:/var/lib/postgresql/data
+    environment:
+      # sets this env vars for initial configuration of our db service
+      # do not hard code on production
+      - POSTGRES_DB=devdb
+      - POSTGRES_USER=devuser
+      - POSTGRES_PASSWORD=changeme
+
+volumes:
+  # no need to add after : as the default location would be mapped automatically
+  dev-db-data:
